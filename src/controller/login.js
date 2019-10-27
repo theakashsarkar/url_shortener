@@ -6,24 +6,25 @@ const {check,validationResult}      = require('express-validator');
 const {validate}   = require('../utils/password');
 const {app_secret} = require('../config.json');
 
-const loginvalidator = [check('email').isEmail,check('password').isLength({min:5})];
-router.post('/login',loginvalidator,async (req,res) =>{
+const loginValidator = [check('email').isEmail(),check('password').isLength({min:5})];
+router.post('/login',loginValidator,async (req,res) =>{
     const errors = (validationResult(req));
         if(!errors.isEmpty()){
             return res
-            .status(402)
+            .status(422)
             .json({ errors: errors.array()});
         }
     let {password,email} = req.body;
-    let [uerr,user] = await _p(User.findOne({
+    let [uer,user] = await _p(User.findOne({
         where:{
             email
         }
 
     }));  
-    if(uer && !user){
+    if(!user && uer ){
         res.status(402).json({error:true, message:"user not found"});
     }else{
+        console.log(user.password);
         let [salt,hash] = user.password.split(".");
         let {email,password,id} = user;
         let valid = validate(password,hash,salt);
