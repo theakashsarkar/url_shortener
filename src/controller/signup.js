@@ -8,9 +8,9 @@ const signupValidator = [
     check('email').isEmail(),
     check('password').isLength({min:5})
 ]
-router.post('/signup',signupValidator,async(req,res)=>{
+router.post('/signup',signupValidator,async (req,res)=>{
     const errors = (validationResult(req));
-        if(!errors.isEmpty){
+        if(!errors.isEmpty()){
             return res
             .status(402)
             .json({errors:errors.array() })

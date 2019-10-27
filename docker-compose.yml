@@ -21,5 +21,9 @@ services:
       - POSTGRES_DB=lwhh  
     logging:
       driver: none
+  lwhh-adminer:
+    image: adminer
+    ports:
+      - 8080:8080    
 
     
