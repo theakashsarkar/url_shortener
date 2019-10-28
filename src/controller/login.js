@@ -2,18 +2,13 @@ const {User}       = require('../utils/db');
 const _p           = require('../utils/promise_error');
 const router       = require('express').Router();
 const jwt          = require('jsonwebtoken');
-const {check,validationResult}      = require('express-validator');
+const {check}      = require('express-validator');
 const {validate}   = require('../utils/password');
+const rejectInvalid= require('../middlewares/rejectInvalid');
 const {app_secret} = require('../config.json');
 
 const loginValidator = [check('email').isEmail(),check('password').isLength({min:5})];
-router.post('/login',loginValidator,async (req,res) =>{
-    const errors = (validationResult(req));
-        if(!errors.isEmpty()){
-            return res
-            .status(422)
-            .json({ errors: errors.array()});
-        }
+router.post('/login',loginValidator,rejectInvalid,async (req,res) =>{
     let {password,email} = req.body;
     let [uer,user] = await _p(User.findOne({
         where:{
@@ -22,9 +17,9 @@ router.post('/login',loginValidator,async (req,res) =>{
 
     }));  
     if(!user && uer ){
-        res.status(402).json({error:true, message:"user not found"});
+        return next(uer);
     }else{
-        console.log(user.password);
+        //onsole.log(user.password);
         let [salt,hash] = user.password.split(".");
         let {email,password,id} = user;
         let valid = validate(password,hash,salt);
@@ -39,7 +34,7 @@ router.post('/login',loginValidator,async (req,res) =>{
             });
         }
         else{
-            res.status(402).json({error:true,message:"Password incorrect"})
+            next(new error("password invalid"));
         }
     }  
 })
