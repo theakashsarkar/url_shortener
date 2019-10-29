@@ -9,7 +9,7 @@ const signupValidator = [
     check('email').isEmail(),
     check('password').isLength({min:5})
 ]
-router.post('/signup',signupValidator,rejectInvalid,async (req,res)=>{
+router.post('/signup',signupValidator,rejectInvalid,async (req,res,next)=>{
         let chenk = generate(req.body.password);
         let password = `${chenk.salt}.${chenk.hash}`;
         let {name,email} = req.body;

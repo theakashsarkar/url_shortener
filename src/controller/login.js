@@ -8,7 +8,7 @@ const rejectInvalid= require('../middlewares/rejectInvalid');
 const {app_secret} = require('../config.json');
 
 const loginValidator = [check('email').isEmail(),check('password').isLength({min:5})];
-router.post('/login',loginValidator,rejectInvalid,async (req,res) =>{
+router.post('/login',loginValidator,rejectInvalid,async (req,res,next) =>{
     let {password,email} = req.body;
     let [uer,user] = await _p(User.findOne({
         where:{
