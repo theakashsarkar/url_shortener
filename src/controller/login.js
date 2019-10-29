@@ -34,7 +34,7 @@ router.post('/login',loginValidator,rejectInvalid,async (req,res,next) =>{
             });
         }
         else{
-            next(new error("password invalid"));
+            next(new Error("password invalid"));
         }
     }  
 })

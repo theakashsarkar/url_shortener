@@ -13,11 +13,12 @@ const User = db.define('users',{
 
 });
 const Direction = db.define('direction',{
+    user_id:Sequelize.NUMERIC,
     destination:Sequelize.TEXT,
     hash:Sequelize.TEXT
 });
 
-  db.sync()
+  db.sync({force:true})
    .then(e => {
      console.log('Database Synced');
    })
